@@ -6,7 +6,7 @@ authors:
   orcid: "https://orcid.org/0000-0002-7841-7530"
 - family-names: "Scambor"
   given-names: "Andree"
-title: "Automated Tool for Modelling Impedance for SPICE "
+title: "Automated Tool for Modelling Impedance for SPICE (ATMIS)"
 version: v1.0
 date-released: 2022-11-24
-url: "https://github.com/Maije2908/Fitting_Algorithm"
+url: "https://github.com/Maije2908/ATMIS"
