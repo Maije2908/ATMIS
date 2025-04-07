@@ -17,16 +17,35 @@ class IOhandler:
     def __init__(self, logger_instance = logging.getLogger()):
         self.logger = logger_instance
         self.files = list()
+        self.autoname = True
         self.outpath = None
+        self.filename = None
+        self.modelname = None
 
-    def set_out_path(self, path):
+    def set_out_path(self, path, filename=None, modelname=None):
         """
         Setter method to set the output path for the IOhandler
 
         :param path: The requested output path
+        :param path_direct: specifies if the path is to be taken
         :return: None
         """
-        self.outpath = path
+        if modelname is None and filename is None:
+            self.autoname = True
+            self.outpath = path
+        else:
+            # Assign name to both model and file name, if only one name is provided
+            modelname = filename if modelname is None else modelname
+            filename = modelname if filename is None else filename
+            # Check if we have string values
+            if isinstance(filename, str) and isinstance(modelname, str):
+                self.autoname = False
+                self.outpath = path
+                self.modelname = modelname
+                self.filename = filename
+            else:
+                raise ValueError("Either Modelname or Filename supplied is not a string")
+
 
     def load_file(self, path):
         """
@@ -77,8 +96,10 @@ class IOhandler:
         match fit_type:
             case constants.El.INDUCTOR:
 
-                # define the name of the model here:
-                model_name = "L_1"
+                if self.autoname:
+                    model_name = "L_1"
+                else:
+                    model_name = self.modelname
 
                 # main element parameters
                 L = out['L'].value*config.INDUNIT
@@ -142,8 +163,10 @@ class IOhandler:
 
             case constants.El.CAPACITOR:
 
-                # define the name of the model here:
-                model_name = "C_1"
+                if self.autoname:
+                    model_name = "C_1"
+                else:
+                    model_name = self.modelname
 
                 # main element parameters
                 C = out['C'].value*config.CAPUNIT
@@ -230,21 +253,29 @@ class IOhandler:
 
 
         ############### OUTPUT #########################################################################################
-        # get output folder and path
-        out_path = os.path.split(self.outpath)[0]
-        dir_name = os.path.normpath(self.outpath).split(os.sep)[-2]
-        out_folder = os.path.join(out_path, "fit_results_%s" % dir_name)
 
-        #create the folder; should not be necessary to handle an exception; however folder could be write protected
-        try:
-            os.makedirs(out_folder, exist_ok = True)
-        except Exception:
-            raise
+        if self.autoname:
+            # get output folder and path
+            out_path = os.path.split(self.outpath)[0]
+            dir_name = os.path.normpath(self.outpath).split(os.sep)[-2]
+            out_folder = os.path.join(out_path, "fit_results_%s" % dir_name)
 
-        # write LTSpice .lib file
-        file = open(os.path.join(out_folder, "LT_Spice_Model_" + dir_name + ".lib"), "w+")
-        file.write(lib)
-        file.close()
+            #create the folder; should not be necessary to handle an exception; however folder could be write protected
+            try:
+                os.makedirs(out_folder, exist_ok = True)
+            except Exception:
+                raise
+
+            # write LTSpice .lib file
+            file = open(os.path.join(out_folder, "LT_Spice_Model_" + dir_name + ".lib"), "w+")
+            file.write(lib)
+            file.close()
+        else:
+            out_folder = self.outpath
+            # write LTSpice .lib file
+            file = open(os.path.join(out_folder, self.filename + ".lib"), "w+")
+            file.write(lib)
+            file.close()
 
     def generate_Netlist_2_port_full_fit(self, parameters, fit_order, fit_type, saturation_table, captype=None):
         """
@@ -269,8 +300,10 @@ class IOhandler:
         match fit_type:
             case constants.El.INDUCTOR:
 
-                # define the name of the model here:
-                model_name = "L_1"
+                if self.autoname:
+                    model_name = "L_1"
+                else:
+                    model_name = self.modelname
 
                 # parameters for the main elements
                 L = out['L'].value*config.INDUNIT
@@ -352,8 +385,10 @@ class IOhandler:
 
             case constants.El.CAPACITOR:
 
-                # define the name of the model here:
-                model_name = "C_1"
+                if self.autoname:
+                    model_name = "C_1"
+                else:
+                    model_name = self.modelname
 
                 # main element parameters
                 C = out['C'].value*config.CAPUNIT
@@ -464,20 +499,30 @@ class IOhandler:
                 lib += '.ENDS {name}'.format(name=model_name) + "\n"
 
 
-        #create paths for the output folder and get the filename without extension
-        out_path = os.path.split(self.outpath)[0]
-        dir_name = os.path.normpath(self.outpath).split(os.sep)[-2]
-        out_folder = os.path.join(out_path, "fit_results_%s" % dir_name)
+        if self.autoname:
+            # get output folder and path
+            out_path = os.path.split(self.outpath)[0]
+            dir_name = os.path.normpath(self.outpath).split(os.sep)[-2]
+            out_folder = os.path.join(out_path, "fit_results_%s" % dir_name)
 
-        #create the folder; should not be necessary to handle an exception; however folder could be write protected
-        try:
-            os.makedirs(out_folder, exist_ok = True)
-        except Exception:
-            raise
+            #create the folder; should not be necessary to handle an exception; however folder could be write protected
+            try:
+                os.makedirs(out_folder, exist_ok = True)
+            except Exception:
+                raise
 
-        file = open(os.path.join(out_folder, "LT_Spice_Model_" + dir_name + ".lib"), "w+")
-        file.write(lib)
-        file.close()
+            # write LTSpice .lib file
+            file = open(os.path.join(out_folder, "LT_Spice_Model_" + dir_name + ".lib"), "w+")
+            file.write(lib)
+            file.close()
+        else:
+            out_folder = self.outpath
+            # write LTSpice .lib file
+            file = open(os.path.join(out_folder, self.filename + ".lib"), "w+")
+            file.write(lib)
+            file.close()
+
+
 
     def generate_Netlist_4_port_single_point(self, parametersDM, parametersCM, fit_orderDM, fit_orderCM):
 
@@ -648,7 +693,7 @@ class IOhandler:
         file.write(lib)
         file.close()
 
-    def generate_Netlist_2_port_single_point(self, parameters, fit_order, fit_type, saturation_table, captype = None):
+    def generate_Netlist_2_port_single_point(self, parameters, fit_order, fit_type, saturation_table='', captype = None):
         """
         Writes an LTSpice Netlist to the path that is stored in the IOhandlers instance variable.
 
@@ -673,8 +718,10 @@ class IOhandler:
         match fit_type:
             case constants.El.INDUCTOR:
 
-                # define the name of the model here:
-                model_name = "L_1"
+                if self.autoname:
+                    model_name = "L_1"
+                else:
+                    model_name = self.modelname
 
                 # main element parameters
                 L = out['L'].value*config.INDUNIT
@@ -718,8 +765,10 @@ class IOhandler:
 
             case constants.El.CAPACITOR:
 
-                # define the name of the model here:
-                model_name = "C_1"
+                if self.autoname:
+                    model_name = "C_1"
+                else:
+                    model_name = self.modelname
 
                 # main element parameters
                 C = out['C'].value*config.CAPUNIT
@@ -772,21 +821,28 @@ class IOhandler:
 
 
         ############### OUTPUT #########################################################################################
-        # get output folder and path
-        out_path = os.path.split(self.outpath)[0]
-        dir_name = os.path.normpath(self.outpath).split(os.sep)[-2]
-        out_folder = os.path.join(out_path, "fit_results_%s" % dir_name)
+        if self.autoname:
+            # get output folder and path
+            out_path = os.path.split(self.outpath)[0]
+            dir_name = os.path.normpath(self.outpath).split(os.sep)[-2]
+            out_folder = os.path.join(out_path, "fit_results_%s" % dir_name)
 
-        #create the folder; should not be necessary to handle an exception; however folder could be write protected
-        try:
-            os.makedirs(out_folder, exist_ok = True)
-        except Exception:
-            raise
+            #create the folder; should not be necessary to handle an exception; however folder could be write protected
+            try:
+                os.makedirs(out_folder, exist_ok = True)
+            except Exception:
+                raise
 
-        # write LTSpice .lib file
-        file = open(os.path.join(out_folder, "LT_Spice_Model_" + dir_name + ".lib"), "w+")
-        file.write(lib)
-        file.close()
+            # write LTSpice .lib file
+            file = open(os.path.join(out_folder, "LT_Spice_Model_" + dir_name + ".lib"), "w+")
+            file.write(lib)
+            file.close()
+        else:
+            out_folder = self.outpath
+            # write LTSpice .lib file
+            file = open(os.path.join(out_folder, self.filename + ".lib"), "w+")
+            file.write(lib)
+            file.close()
 
     def export_parameters(self, param_array, order, fit_type, captype = None):
         """
@@ -883,18 +939,22 @@ class IOhandler:
         #write parameters to a pandas dataframe and transpose
         data_out = pd.DataFrame(out_dict)
         # data_out.transpose()
+        if self.autoname:
+            out_path = os.path.split(self.outpath)[0]
+            dir_name = os.path.normpath(self.outpath).split(os.sep)[-2]
+            out_folder = os.path.join(out_path, "fit_results_%s" % dir_name)
+            try:
+                os.makedirs(out_folder, exist_ok = True)
+            except Exception:
+                raise
 
-        out_path = os.path.split(self.outpath)[0]
-        dir_name = os.path.normpath(self.outpath).split(os.sep)[-2]
-        out_folder = os.path.join(out_path, "fit_results_%s" % dir_name)
-        try:
-            os.makedirs(out_folder, exist_ok = True)
-        except Exception:
-            raise
+            data_out.to_excel(os.path.join(out_folder, "Parameters_" + dir_name + ".xlsx"))
 
-        data_out.to_excel(os.path.join(out_folder, "Parameters_" + dir_name + ".xlsx"))
+        else:
+            out_folder = self.outpath
+            data_out.to_excel(os.path.join(out_folder, "Parameters_" + self.filename + ".xlsx"))
 
-    def output_plot(self,freq, z21, mag, ang, mdl, filename):
+    def output_plot(self, freq, z21, mag, ang, mdl, filename):
         """
         Method to output a Bode-plot and a linear difference plot of the model.
 
@@ -906,22 +966,23 @@ class IOhandler:
         :param filename: The name of the file that the plot will be made for
         :return: None
         """
+        if self.autoname:
+            out_path = os.path.split(self.outpath)[0]
+            dir_name = os.path.normpath(self.outpath).split(os.sep)[-2]
+            out_folder = os.path.join(out_path, "fit_results_%s" % dir_name)
+            plot_folder = os.path.join(out_folder, "plots")
 
-        out_path = os.path.split(self.outpath)[0]
-        dir_name = os.path.normpath(self.outpath).split(os.sep)[-2]
-        out_folder = os.path.join(out_path, "fit_results_%s" % dir_name)
-        plot_folder = os.path.join(out_folder, "plots")
+            try:
+                os.makedirs(out_folder, exist_ok=True)
+            except Exception:
+                raise
 
-
-        try:
-            os.makedirs(out_folder, exist_ok=True)
-        except Exception:
-            raise
-
-        try:
-            os.makedirs(plot_folder, exist_ok=True)
-        except Exception:
-            raise
+            try:
+                os.makedirs(plot_folder, exist_ok=True)
+            except Exception:
+                raise
+        else:
+            plot_folder = self.outpath
 
 
         title = filename
