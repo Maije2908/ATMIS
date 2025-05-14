@@ -402,10 +402,10 @@ class Fitter:
 
         # find peaks of Magnitude Impedance curve (using scipy.signal.find_peaks)
         # using dB here in order to match the prominence values
-        match self.ser_shunt:
-            case constants.calc_method.SERIES:
+        match self.fit_type:
+            case constants.El.INDUCTOR:
                 mag_maxima = find_peaks(20*np.log10(magnitude_data), prominence=prominence_mag)
-            case constants.calc_method.SHUNT:
+            case constants.El.CAPACITOR:
                 mag_maxima = find_peaks(-20 * np.log10(magnitude_data), prominence=prominence_mag)
 
 
