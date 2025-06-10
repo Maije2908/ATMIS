@@ -250,7 +250,7 @@ class GUI:
         label_spec.grid(column=0, row=1, columnspan=2, sticky=tk.NW, **GUI_config.HEADLINE_PADDING)
 
         # initial value
-        passive_element_label = tk.Label(self.root, text="Nominal value", bg=GUI_config.BCKGND_COLOR)
+        passive_element_label = tk.Label(self.root, text="Nominal value (H/F)", bg=GUI_config.BCKGND_COLOR)
         passive_element_label.config(font=GUI_config.ENTRY_FONT)
         passive_element_label.grid(column=0, row=2, sticky=tk.W, **GUI_config.SPEC_PADDING)
 
@@ -259,7 +259,7 @@ class GUI:
         self.entry_nominal_value.grid(column=1, row=2, sticky=tk.W, **GUI_config.ENTRY_PADDING)
 
         # initial resistance value
-        label_resistance = tk.Label(self.root, text="\u03A9", bg=GUI_config.BCKGND_COLOR)
+        label_resistance = tk.Label(self.root, text="R_series (\u03A9)", bg=GUI_config.BCKGND_COLOR)
         label_resistance.config(font=GUI_config.ENTRY_FONT)
         label_resistance.grid(column=0, row=3, sticky=tk.W, **GUI_config.SPEC_PADDING)
 
@@ -268,7 +268,7 @@ class GUI:
         self.entry_resistance.grid(column=1, row=3, sticky=tk.W, **GUI_config.ENTRY_PADDING)
 
         # Prominence
-        label_prominence = tk.Label(self.root, text="Prominence in dB", bg=GUI_config.BCKGND_COLOR)
+        label_prominence = tk.Label(self.root, text="Prominence (dB)", bg=GUI_config.BCKGND_COLOR)
         label_prominence.config(font=GUI_config.ENTRY_FONT)
         label_prominence.grid(column=0, row=5, sticky=tk.W, **GUI_config.SPEC_PADDING)
 

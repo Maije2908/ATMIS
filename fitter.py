@@ -47,9 +47,9 @@ class Fitter:
 
         self.name = name
 
-        # Set frequency vector and data #TODO: check if that hard limit is okay in regular operation
-        self.freq = freq[freq < config.FREQ_UPPER_LIMIT]
-        self.z21_data = data[freq < config.FREQ_UPPER_LIMIT]
+        # Set frequency vector and data
+        self.freq = freq[(freq > config.FREQ_LOWER_LIMIT) & (freq < config.FREQ_UPPER_LIMIT)]
+        self.z21_data = data[(freq > config.FREQ_LOWER_LIMIT) & (freq < config.FREQ_UPPER_LIMIT)]
 
         # Smooth data
         savgol_length = int(np.floor(SAVGOL_WIN_LENGTH_REL* len(freq))) if int(np.floor(SAVGOL_WIN_LENGTH_REL* len(freq))) > 2 else 3
@@ -66,6 +66,7 @@ class Fitter:
         if nominal_value is None:
             self.calculate_nominal_value()
         else:
+            self.get_main_resonance()
             self.nominal_value = nominal_value
 
         # Calculate series resistance, if not provided
