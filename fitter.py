@@ -9,14 +9,13 @@ from lmfit import minimize, Parameters
 from scipy.signal import find_peaks
 import decimal
 import copy
-import warnings
 import sys
-import pandas as pd
 import logging
 
 
 # import constants
 import constants
+from config import MAX_ORDER
 from constants import *
 import config
 

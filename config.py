@@ -3,8 +3,11 @@ import constants
 
 FULL_FIT = True
 MULTIPROCESSING_COUNT = 16
+
 FREQ_UPPER_LIMIT = 2e9
 FREQ_LOWER_LIMIT = 0
+
+MAX_ORDER = 15
 
 FORCE_SINGLE_POINT_MODEL = False
 
@@ -19,3 +22,4 @@ FIT_BY = constants.fcnmode.FIT
 
 
 CMC_REQUIRED_CONFIGURATIONS = ["DM", "CM"]
+

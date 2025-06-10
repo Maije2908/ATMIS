@@ -7,8 +7,6 @@ class El:
 
 PROMINENCE_DEFAULT = .5 #dB
 ACOUSTIC_RESONANCE_PROMINENCE = 1.0 #dB
-MAX_ORDER = 15
-
 
 # offset factor for the first resonance detected after the main peak (min_f = f0 * OFFSET_FACTOR)
 # if the first resonance after the main peak is not fitted, consider setting this to a lower value
