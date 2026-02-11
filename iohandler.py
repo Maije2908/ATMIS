@@ -522,8 +522,6 @@ class IOhandler:
             file.write(lib)
             file.close()
 
-
-
     def generate_Netlist_4_port_single_point(self, parametersDM, parametersCM, fit_orderDM, fit_orderCM):
 
         # define the name of the model here:

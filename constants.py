@@ -35,13 +35,7 @@ BW_MIN_FACTOR = 1/BW_MAX_FACTOR
 # factor to stretch the bandwidth of the last frequency zone (1 = no stretch)
 BANDWIDTH_STRETCH_LAST_ZONE = 1
 
-
-#threshold for the calculation of the offset; necessary for small coils that have a lot of zero crossings at low frequencies
-PHASE_OFFSET_THRESHOLD = 60 #60 #°
 PHASE_OFFSET_THRESHOLD_CAPS = 20
-#value for detection of the inductive/capacitive range; if phase is below this value, inductive/capacitive range will not be detected
-PERMITTED_MIN_PHASE = 75 #75
-
 
 #parameters for the smoothing filter
 SAVGOL_WIN_LENGTH_REL = 0.013 # relative savgol window length; yields 52 samples for 4001 point of measurement data
@@ -54,7 +48,8 @@ QUANTILE_MULTIPLICATION_FACTOR = 5
 
 MINIMUM_PRECISION = 1e-12 #if we encounter values that get singular, here is the threshold
 
-DEFAULT_OFFSET_PEAK = 40 #samples; this specifies the default offset for a resonance peak if the 3dB point can't be found
+#TODO: maybe convert to relative samples
+DEFAULT_OFFSET_PEAK = 0.0099975 #no unit, multiplicative factor, leads to offset of 40 samples for 4001 points; this specifies the default offset for a resonance peak if the 3dB point can't be found
 
 # The relative offset of the data that will be passed to the bandwidth model
 BW_MODEL_DATA_OFFSET_STRETCH = 1.5 # (-)
