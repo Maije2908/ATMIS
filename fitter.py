@@ -235,7 +235,7 @@ class Fitter:
                 max_slope = slope_quantile_50 * QUANTILE_MULTIPLICATION_FACTOR
 
                 # boolean index the data that has lower than max slope and calculate the mean of it
-                C_vals_eff = np.array(C_vals)[abs(np.gradient(self.data_mag)[self.freq < self.f0][self._offset:]) < max_slope]
+                C_vals_eff = np.array(C_vals)[abs(np.gradient(self.data_mag)[self.freq < self.f0][self._offset:]) < abs(max_slope)]
 
                 self.nominal_value = np.median(C_vals_eff)
 
